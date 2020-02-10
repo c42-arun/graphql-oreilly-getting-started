@@ -19,7 +19,9 @@ let queryRepoList = `
 { 
   viewer { 
     name
-    repos: repositories (first: 10) {
+    repos: repositories (
+        first: 10, 
+        orderBy: {field: CREATED_AT, direction: DESC}) {
       totalCount
       nodes {
         name
