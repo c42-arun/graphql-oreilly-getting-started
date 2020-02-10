@@ -3,7 +3,7 @@ const emptyStar = "☆";
 
 const commitFragment = `
 fragment commitFragment on Repository {
-  ref(qualifiedName: "master") {
+  commits: ref(qualifiedName: "master") {
     target {
       ... on Commit {
         history {
@@ -12,8 +12,7 @@ fragment commitFragment on Repository {
       }
     }
   }
-}
-`;
+}`;
 
 let queryRepoList = `
 { 
@@ -25,10 +24,16 @@ let queryRepoList = `
       totalCount
       nodes {
         name
+        description
+        issues {
+          totalCount
+        }
+        ...commitFragment        
       }
     }
   }
-}`;
+}
+` + commitFragment;
 
 let mutationAddStar;
 
@@ -77,6 +82,8 @@ $(window).ready(function () {
           const repoElement = `
           <div>
             <h3>${node.name}</h3>
+            <p>${node.description? node.description : 'n/a'}</p>
+            <p>${node.commits.target.history.totalCount} commits</p>
           </div>
         `;
 
