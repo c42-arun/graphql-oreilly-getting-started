@@ -122,7 +122,7 @@ const queryType = new graphql.GraphQLObjectType({
             type: graphql.GraphQLList(userType),
             args: {
                 id: {
-                    type: graphql.GraphQLInt
+                    type: graphql.GraphQLNonNull(graphql.GraphQLInt)
                 }
             },
             resolve(root, args) {
@@ -131,7 +131,7 @@ const queryType = new graphql.GraphQLObjectType({
                 var query = knex('user');
 
                 if (args.id) {
-                    query = query.where('id', args.id);
+                    query = query.where('id', args.id).first();
                 }
 
                 return query;
