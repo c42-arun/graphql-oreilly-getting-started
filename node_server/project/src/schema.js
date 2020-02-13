@@ -121,6 +121,33 @@ const queryType = new graphql.GraphQLObjectType({
         users: {
             type: graphql.GraphQLList(userType),
             args: {
+                first: {
+                    type: graphql.GraphQLInt,
+                    defaultValue: 10
+                },
+                offset: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            resolve(root, args) {
+                console.log(args);
+
+                var query = knex('user');
+
+                if (args.first) {
+                    query = query.limit(args.first);
+                }
+
+                if (args.offset) {
+                    query = query.offset(args.offset);
+                }
+
+                return query;
+            }
+        },
+        user: {
+            type: userType,
+            args: {
                 id: {
                     type: graphql.GraphQLNonNull(graphql.GraphQLInt)
                 }
@@ -136,7 +163,7 @@ const queryType = new graphql.GraphQLObjectType({
 
                 return query;
             }
-        },
+        },        
         books: {
             type: graphql.GraphQLList(bookType),
             args: {
