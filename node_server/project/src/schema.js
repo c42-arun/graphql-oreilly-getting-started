@@ -120,14 +120,39 @@ const queryType = new graphql.GraphQLObjectType({
     fields: {
         users: {
             type: graphql.GraphQLList(userType),
-            resolve(root) {
-                return knex('user');
+            args: {
+                id: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            resolve(root, args) {
+                console.log(args);
+
+                var query = knex('user');
+
+                if (args.id) {
+                    query = query.where('id', args.id);
+                }
+
+                return query;
             }
         },
         books: {
             type: graphql.GraphQLList(bookType),
-            resolve(root) {
-                return knex('book');
+            args: {
+                fiction: {
+                    type: graphql.GraphQLBoolean
+                }
+            },
+            resolve(root, args) {
+                console.log(args);
+                var query = knex('book');
+
+                if (args.fiction !== null) {
+                    query = query.where('fiction', args.fiction);
+                }
+
+                return query;
             }
         }
     }
