@@ -1,6 +1,8 @@
 const graphql = require('graphql');
 const knex = require('../db');
 
+const { rateBook } = require('./models');
+
 const userType = new graphql.GraphQLObjectType({
     name: 'User',
     description: 'A user in the system',
@@ -196,8 +198,38 @@ const queryType = new graphql.GraphQLObjectType({
     }
 });
 
+const mutationType = new graphql.GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+        // this is really the various mutation operations possible
+        rateBook: {
+            type: hasReadType, // return value type from the mutation
+            description: 'Rate a book or update a rating',
+            args: {
+                user: {
+                    type: graphql.GraphQLNonNull(graphql.GraphQLID)
+                },
+                book: {
+                    type: graphql.GraphQLNonNull(graphql.GraphQLID)
+                },
+                rating: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            resolve(source, args) {
+                const userId = args.user;
+                const bookId = args.book;
+                const rating = args.rating;
+
+                return rateBook(bookId, userId, rating);
+            }
+        }
+    }
+});
+
 const schema = new graphql.GraphQLSchema({
-    query: queryType
+    query: queryType,
+    mutation: mutationType
 });
 
 module.exports = schema;

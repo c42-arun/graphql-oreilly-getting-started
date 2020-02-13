@@ -8,7 +8,7 @@ async function getUser(userId) {
     return await knex('user').where('id', userId).first();
 }
 
-async function readBook(bookId, userId, rating=null) {
+async function rateBook(bookId, userId, rating=null) {
     if (rating < 0 || rating > 10) {
         throw new Error(`Rating must be between 0 and 10, was ${rating}`);
     }
@@ -36,4 +36,4 @@ async function readBook(bookId, userId, rating=null) {
     return hasRead;
 }
 
-module.exports = { readBook };
+module.exports = { rateBook };
