@@ -115,20 +115,22 @@ const hasRead = new graphql.GraphQLObjectType({
     }
 });
 
+const paginationArgs = {
+    first: {
+        type: graphql.GraphQLInt,
+        defaultValue: 10
+    },
+    offset: {
+        type: graphql.GraphQLInt
+    }
+};
+
 const queryType = new graphql.GraphQLObjectType({
     name: 'Query',
     fields: {
         users: {
             type: graphql.GraphQLList(userType),
-            args: {
-                first: {
-                    type: graphql.GraphQLInt,
-                    defaultValue: 10
-                },
-                offset: {
-                    type: graphql.GraphQLInt
-                }
-            },
+            args: paginationArgs,
             resolve(root, args) {
                 console.log(args);
 
@@ -169,16 +171,25 @@ const queryType = new graphql.GraphQLObjectType({
             args: {
                 fiction: {
                     type: graphql.GraphQLBoolean
-                }
+                },
+                ...paginationArgs
             },
             resolve(root, args) {
                 console.log(args);
                 var query = knex('book');
 
-                if (args.fiction !== null) {
+                if (args.fiction != null) {
                     query = query.where('fiction', args.fiction);
                 }
 
+                if (args.first) {
+                    query = query.limit(args.first);
+                }
+
+                if (args.offset) {
+                    query = query.offset(args.offset);
+                }
+                
                 return query;
             }
         }
