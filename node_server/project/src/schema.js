@@ -26,7 +26,7 @@ const userType = new graphql.GraphQLObjectType({
                 description: 'Whether the user is god'
             },
             booksRead: {
-                type: graphql.GraphQLList(hasRead),
+                type: graphql.GraphQLList(hasReadType),
                 resolve(user) {
                     return knex('hasRead').where('userId', user.id);
                 }
@@ -82,7 +82,7 @@ const bookType = new graphql.GraphQLObjectType({
                 }
             },
             readBy: {
-                type: graphql.GraphQLList(hasRead),
+                type: graphql.GraphQLList(hasReadType),
                 resolve(book) {
                     return knex('hasRead').where('bookId', book.id);
                 }
@@ -91,7 +91,7 @@ const bookType = new graphql.GraphQLObjectType({
     }
 });
 
-const hasRead = new graphql.GraphQLObjectType({
+const hasReadType = new graphql.GraphQLObjectType({
     name: 'HasRead',
     fields: {
         book: {
@@ -189,7 +189,7 @@ const queryType = new graphql.GraphQLObjectType({
                 if (args.offset) {
                     query = query.offset(args.offset);
                 }
-                
+
                 return query;
             }
         }
